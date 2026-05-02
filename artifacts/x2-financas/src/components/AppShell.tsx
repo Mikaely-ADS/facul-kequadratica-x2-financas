@@ -111,7 +111,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
 
           <button 
-            onClick={() => setLocation("/login")}
+            onClick={() => setLocation("/")}
             className="flex items-center gap-2 px-2 py-2 mb-4 w-full rounded-md text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
           >
             <LogOut className="w-4 h-4" />
