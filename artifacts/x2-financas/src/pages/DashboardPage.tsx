@@ -155,7 +155,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        <motion.div variants={itemVariants} className="lg:col-span-2 lg:mt-2">
+        <motion.div variants={itemVariants} className="lg:col-span-2 lg:mt-4">
           <Card className="bg-card border-border">
             <CardHeader>
               <CardTitle className="text-lg font-bold">Desempenho Semanal</CardTitle>
