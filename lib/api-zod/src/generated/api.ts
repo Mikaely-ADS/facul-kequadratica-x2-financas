@@ -8,9 +8,229 @@
 import * as zod from "zod";
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
   status: zod.string(),
 });
+
+/**
+ * @summary List transactions
+ */
+export const ListTransactionsQueryParams = zod.object({
+  type: zod.enum(["income", "expense"]).optional(),
+  category: zod.coerce.string().optional(),
+});
+
+export const ListTransactionsResponseItem = zod.object({
+  id: zod.number(),
+  description: zod.string(),
+  category: zod.string(),
+  amount: zod.number(),
+  type: zod.enum(["income", "expense"]),
+  paymentMethod: zod.string(),
+  date: zod.coerce.date(),
+});
+export const ListTransactionsResponse = zod.array(ListTransactionsResponseItem);
+
+/**
+ * @summary Create a transaction
+ */
+export const CreateTransactionBody = zod.object({
+  description: zod.string(),
+  category: zod.string(),
+  amount: zod.number(),
+  type: zod.enum(["income", "expense"]),
+  paymentMethod: zod.string(),
+  date: zod.coerce.date(),
+});
+
+export const CreateTransactionResponse = zod.object({
+  id: zod.number(),
+  description: zod.string(),
+  category: zod.string(),
+  amount: zod.number(),
+  type: zod.enum(["income", "expense"]),
+  paymentMethod: zod.string(),
+  date: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete a transaction
+ */
+export const DeleteTransactionParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const DeleteTransactionResponse = zod.object({
+  success: zod.boolean(),
+});
+
+/**
+ * @summary List goals
+ */
+export const ListGoalsResponseItem = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  category: zod.string(),
+  targetAmount: zod.number(),
+  currentAmount: zod.number(),
+  deadline: zod.coerce.date(),
+});
+export const ListGoalsResponse = zod.array(ListGoalsResponseItem);
+
+/**
+ * @summary Create a goal
+ */
+export const CreateGoalBody = zod.object({
+  name: zod.string(),
+  category: zod.string(),
+  targetAmount: zod.number(),
+  currentAmount: zod.number().optional(),
+  deadline: zod.coerce.date(),
+});
+
+export const CreateGoalResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  category: zod.string(),
+  targetAmount: zod.number(),
+  currentAmount: zod.number(),
+  deadline: zod.coerce.date(),
+});
+
+/**
+ * @summary Update a goal (e.g. add to current amount)
+ */
+export const UpdateGoalParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateGoalBody = zod.object({
+  currentAmount: zod.number().optional(),
+  name: zod.string().optional(),
+  targetAmount: zod.number().optional(),
+});
+
+export const UpdateGoalResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  category: zod.string(),
+  targetAmount: zod.number(),
+  currentAmount: zod.number(),
+  deadline: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete a goal
+ */
+export const DeleteGoalParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const DeleteGoalResponse = zod.object({
+  success: zod.boolean(),
+});
+
+/**
+ * @summary List credit cards
+ */
+export const ListCardsResponseItem = zod.object({
+  id: zod.number(),
+  holder: zod.string(),
+  last4: zod.string(),
+  brand: zod.string(),
+  limit: zod.number(),
+  balance: zod.number(),
+  expiry: zod.string(),
+  color: zod.string(),
+});
+export const ListCardsResponse = zod.array(ListCardsResponseItem);
+
+/**
+ * @summary Add a credit card
+ */
+export const CreateCardBody = zod.object({
+  holder: zod.string(),
+  last4: zod.string(),
+  brand: zod.string(),
+  limit: zod.number(),
+  balance: zod.number(),
+  expiry: zod.string(),
+  color: zod.string(),
+});
+
+export const CreateCardResponse = zod.object({
+  id: zod.number(),
+  holder: zod.string(),
+  last4: zod.string(),
+  brand: zod.string(),
+  limit: zod.number(),
+  balance: zod.number(),
+  expiry: zod.string(),
+  color: zod.string(),
+});
+
+/**
+ * @summary Dashboard KPI summary
+ */
+export const GetDashboardSummaryResponse = zod.object({
+  currentBalance: zod.number(),
+  balanceDelta: zod.number(),
+  investmentBalance: zod.number(),
+  investmentDelta: zod.number(),
+  fixedExpenses: zod.number(),
+  profitGoal: zod.number(),
+  profitGoalProgress: zod.number(),
+  monthIncome: zod.number(),
+  monthExpenses: zod.number(),
+});
+
+/**
+ * @summary Weekly performance series (Semanas 1-5)
+ */
+export const GetWeeklyPerformanceResponseItem = zod.object({
+  week: zod.string(),
+  value: zod.number(),
+});
+export const GetWeeklyPerformanceResponse = zod.array(
+  GetWeeklyPerformanceResponseItem,
+);
+
+/**
+ * @summary Expense breakdown by category for donut chart
+ */
+export const GetExpensesByCategoryResponseItem = zod.object({
+  category: zod.string(),
+  amount: zod.number(),
+  percentage: zod.number(),
+});
+export const GetExpensesByCategoryResponse = zod.array(
+  GetExpensesByCategoryResponseItem,
+);
+
+/**
+ * @summary Daily cashflow (entradas vs saídas) for the current month
+ */
+export const GetCashflowResponseItem = zod.object({
+  date: zod.string(),
+  income: zod.number(),
+  expense: zod.number(),
+});
+export const GetCashflowResponse = zod.array(GetCashflowResponseItem);
+
+/**
+ * @summary Most recent transactions
+ */
+export const GetRecentTransactionsResponseItem = zod.object({
+  id: zod.number(),
+  description: zod.string(),
+  category: zod.string(),
+  amount: zod.number(),
+  type: zod.enum(["income", "expense"]),
+  paymentMethod: zod.string(),
+  date: zod.coerce.date(),
+});
+export const GetRecentTransactionsResponse = zod.array(
+  GetRecentTransactionsResponseItem,
+);

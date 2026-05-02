@@ -1,0 +1,30 @@
+Crie uma aplicação web de controle financeiro pessoal chamada "X² Finanças" (da marca KêQuadrática) utilizando Next.js, TypeScript, Tailwind CSS, shadcn/ui, Recharts e Firebase. 
+
+### DIRETRIZES DE DESIGN (Manual da Marca):
+1. PALETA DE CORES: 
+   - Primária (Verde Inteligência): #57BC67 (usar em indicadores positivos, botões principais e destaques).
+   - Fundo (Grafite Premium): #1F1F1F (aplicar o Modo Dark como padrão).
+   - Textos: Branco (#FFFFFF) para contraste e Cinza Soft (#D9D9D9) para subtextos.
+   - Hover/Profundidade: Verde Escuro (#2F7D44).
+2. TIPOGRAFIA: 
+   - Títulos: Montserrat SemiBold/Bold.
+   - Corpo/Dashboard: Inter Regular/Medium.
+3. ESTILO: Interface "Fintech Premium", minimalista, cards com bordas suaves, ícones em estilo "outline" (Lucide React) e layout clean com espaçamentos amplos.
+
+### ESTRUTURA DA APLICAÇÃO:
+1. AUTENTICAÇÃO (Firebase Auth): Tela de login minimalista com e-mail e senha conforme o protótipo.
+2. DASHBOARD PRINCIPAL (Resumo):
+   - Cards reativos: Saldo Atual, Saldo de Investimento, Despesas Fixas e Meta de Lucro.
+   - Gráfico de Linha (Recharts): Performance financeira (Semana 1 a 5).
+   - Gráfico de Rosca: Detalhamento de despesas (Alimentação, Lazer, Casa, etc.).
+3. FLUXO DE CAIXA: Lista de transações e gráfico comparativo de Entradas vs Saídas.
+4. METAS: Tabela de objetivos com barras de progresso (shadcn/ui Progress).
+5. CARTÕES: Visualização de cartão de crédito estilo "Neomorfismo/Glassmorphism" em tons escuros.
+6. RESPONSIVIDADE: O menu lateral (Sidebar) deve se transformar em um menu inferior ou hambúrguer no mobile.
+
+### COMPORTAMENTO REATIVO:
+- Utilize Hooks do React para atualizações de estado instantâneas.
+- Integre o Firestore do Firebase para persistência de dados das transações e metas.
+- Implemente componentes da shadcn/ui: Table, Card, Button, Progress, Avatar e Dialog para novos lançamentos.
+
+Crie primeiro a estrutura da Landing Page/Login e o Dashboard Principal com dados mockados que reflitam o protótipo da imagem e utilize a imagem da logo. 

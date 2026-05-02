@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "X² Finanças"
+version = "1.0.0"
+id = "artifacts/x2-financas"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22693
+
+[services.development]
+run = "pnpm --filter @workspace/x2-financas run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/x2-financas", "run", "build" ]
+publicDir = "artifacts/x2-financas/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22693"
+BASE_PATH = "/"

@@ -10,13 +10,20 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: transactions
+    description: Cash flow transactions (entradas e saídas)
+  - name: goals
+    description: Financial goals (metas)
+  - name: cards
+    description: Credit cards (cartões)
+  - name: dashboard
+    description: Dashboard summaries and analytics
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +31,249 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /transactions:
+    get:
+      operationId: listTransactions
+      tags: [transactions]
+      summary: List transactions
+      parameters:
+        - name: type
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [income, expense]
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+    post:
+      operationId: createTransaction
+      tags: [transactions]
+      summary: Create a transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTransactionInput"
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+
+  /transactions/{id}:
+    delete:
+      operationId: deleteTransaction
+      tags: [transactions]
+      summary: Delete a transaction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletedResponse"
+
+  /goals:
+    get:
+      operationId: listGoals
+      tags: [goals]
+      summary: List goals
+      responses:
+        "200":
+          description: List of goals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Goal"
+    post:
+      operationId: createGoal
+      tags: [goals]
+      summary: Create a goal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGoalInput"
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+
+  /goals/{id}:
+    patch:
+      operationId: updateGoal
+      tags: [goals]
+      summary: Update a goal (e.g. add to current amount)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateGoalInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+    delete:
+      operationId: deleteGoal
+      tags: [goals]
+      summary: Delete a goal
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeletedResponse"
+
+  /cards:
+    get:
+      operationId: listCards
+      tags: [cards]
+      summary: List credit cards
+      responses:
+        "200":
+          description: Cards
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Card"
+    post:
+      operationId: createCard
+      tags: [cards]
+      summary: Add a credit card
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCardInput"
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Card"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Dashboard KPI summary
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/performance:
+    get:
+      operationId: getWeeklyPerformance
+      tags: [dashboard]
+      summary: Weekly performance series (Semanas 1-5)
+      responses:
+        "200":
+          description: Series
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WeeklyPoint"
+
+  /dashboard/expenses-by-category:
+    get:
+      operationId: getExpensesByCategory
+      tags: [dashboard]
+      summary: Expense breakdown by category for donut chart
+      responses:
+        "200":
+          description: Breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CategoryBreakdown"
+
+  /dashboard/cashflow:
+    get:
+      operationId: getCashflow
+      tags: [dashboard]
+      summary: Daily cashflow (entradas vs saídas) for the current month
+      responses:
+        "200":
+          description: Cashflow series
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CashflowPoint"
+
+  /dashboard/recent-transactions:
+    get:
+      operationId: getRecentTransactions
+      tags: [dashboard]
+      summary: Most recent transactions
+      responses:
+        "200":
+          description: Recent
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +281,198 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    DeletedResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required: [success]
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        description:
+          type: string
+        category:
+          type: string
+        amount:
+          type: number
+        type:
+          type: string
+          enum: [income, expense]
+        paymentMethod:
+          type: string
+        date:
+          type: string
+          format: date-time
+      required: [id, description, category, amount, type, paymentMethod, date]
+
+    CreateTransactionInput:
+      type: object
+      properties:
+        description:
+          type: string
+        category:
+          type: string
+        amount:
+          type: number
+        type:
+          type: string
+          enum: [income, expense]
+        paymentMethod:
+          type: string
+        date:
+          type: string
+          format: date-time
+      required: [description, category, amount, type, paymentMethod, date]
+
+    Goal:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        targetAmount:
+          type: number
+        currentAmount:
+          type: number
+        deadline:
+          type: string
+          format: date-time
+      required: [id, name, category, targetAmount, currentAmount, deadline]
+
+    CreateGoalInput:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        targetAmount:
+          type: number
+        currentAmount:
+          type: number
+        deadline:
+          type: string
+          format: date-time
+      required: [name, category, targetAmount, deadline]
+
+    UpdateGoalInput:
+      type: object
+      properties:
+        currentAmount:
+          type: number
+        name:
+          type: string
+        targetAmount:
+          type: number
+
+    Card:
+      type: object
+      properties:
+        id:
+          type: integer
+        holder:
+          type: string
+        last4:
+          type: string
+        brand:
+          type: string
+        limit:
+          type: number
+        balance:
+          type: number
+        expiry:
+          type: string
+        color:
+          type: string
+      required: [id, holder, last4, brand, limit, balance, expiry, color]
+
+    CreateCardInput:
+      type: object
+      properties:
+        holder:
+          type: string
+        last4:
+          type: string
+        brand:
+          type: string
+        limit:
+          type: number
+        balance:
+          type: number
+        expiry:
+          type: string
+        color:
+          type: string
+      required: [holder, last4, brand, limit, balance, expiry, color]
+
+    DashboardSummary:
+      type: object
+      properties:
+        currentBalance:
+          type: number
+        balanceDelta:
+          type: number
+        investmentBalance:
+          type: number
+        investmentDelta:
+          type: number
+        fixedExpenses:
+          type: number
+        profitGoal:
+          type: number
+        profitGoalProgress:
+          type: number
+        monthIncome:
+          type: number
+        monthExpenses:
+          type: number
+      required:
+        - currentBalance
+        - balanceDelta
+        - investmentBalance
+        - investmentDelta
+        - fixedExpenses
+        - profitGoal
+        - profitGoalProgress
+        - monthIncome
+        - monthExpenses
+
+    WeeklyPoint:
+      type: object
+      properties:
+        week:
+          type: string
+        value:
+          type: number
+      required: [week, value]
+
+    CategoryBreakdown:
+      type: object
+      properties:
+        category:
+          type: string
+        amount:
+          type: number
+        percentage:
+          type: number
+      required: [category, amount, percentage]
+
+    CashflowPoint:
+      type: object
+      properties:
+        date:
+          type: string
+        income:
+          type: number
+        expense:
+          type: number
+      required: [date, income, expense]

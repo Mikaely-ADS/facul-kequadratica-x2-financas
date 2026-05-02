@@ -6,4 +6,20 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./card";
+export * from "./cashflowPoint";
+export * from "./categoryBreakdown";
+export * from "./createCardInput";
+export * from "./createGoalInput";
+export * from "./createTransactionInput";
+export * from "./createTransactionInputType";
+export * from "./dashboardSummary";
+export * from "./deletedResponse";
+export * from "./goal";
 export * from "./healthStatus";
+export * from "./listTransactionsParams";
+export * from "./listTransactionsType";
+export * from "./transaction";
+export * from "./transactionType";
+export * from "./updateGoalInput";
+export * from "./weeklyPoint";

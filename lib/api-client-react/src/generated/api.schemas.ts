@@ -8,3 +8,128 @@
 export interface HealthStatus {
   status: string;
 }
+
+export interface DeletedResponse {
+  success: boolean;
+}
+
+export type TransactionType =
+  (typeof TransactionType)[keyof typeof TransactionType];
+
+export const TransactionType = {
+  income: "income",
+  expense: "expense",
+} as const;
+
+export interface Transaction {
+  id: number;
+  description: string;
+  category: string;
+  amount: number;
+  type: TransactionType;
+  paymentMethod: string;
+  date: string;
+}
+
+export type CreateTransactionInputType =
+  (typeof CreateTransactionInputType)[keyof typeof CreateTransactionInputType];
+
+export const CreateTransactionInputType = {
+  income: "income",
+  expense: "expense",
+} as const;
+
+export interface CreateTransactionInput {
+  description: string;
+  category: string;
+  amount: number;
+  type: CreateTransactionInputType;
+  paymentMethod: string;
+  date: string;
+}
+
+export interface Goal {
+  id: number;
+  name: string;
+  category: string;
+  targetAmount: number;
+  currentAmount: number;
+  deadline: string;
+}
+
+export interface CreateGoalInput {
+  name: string;
+  category: string;
+  targetAmount: number;
+  currentAmount?: number;
+  deadline: string;
+}
+
+export interface UpdateGoalInput {
+  currentAmount?: number;
+  name?: string;
+  targetAmount?: number;
+}
+
+export interface Card {
+  id: number;
+  holder: string;
+  last4: string;
+  brand: string;
+  limit: number;
+  balance: number;
+  expiry: string;
+  color: string;
+}
+
+export interface CreateCardInput {
+  holder: string;
+  last4: string;
+  brand: string;
+  limit: number;
+  balance: number;
+  expiry: string;
+  color: string;
+}
+
+export interface DashboardSummary {
+  currentBalance: number;
+  balanceDelta: number;
+  investmentBalance: number;
+  investmentDelta: number;
+  fixedExpenses: number;
+  profitGoal: number;
+  profitGoalProgress: number;
+  monthIncome: number;
+  monthExpenses: number;
+}
+
+export interface WeeklyPoint {
+  week: string;
+  value: number;
+}
+
+export interface CategoryBreakdown {
+  category: string;
+  amount: number;
+  percentage: number;
+}
+
+export interface CashflowPoint {
+  date: string;
+  income: number;
+  expense: number;
+}
+
+export type ListTransactionsParams = {
+  type?: ListTransactionsType;
+  category?: string;
+};
+
+export type ListTransactionsType =
+  (typeof ListTransactionsType)[keyof typeof ListTransactionsType];
+
+export const ListTransactionsType = {
+  income: "income",
+  expense: "expense",
+} as const;
