@@ -52,19 +52,17 @@ export default function LandingPage() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col items-start gap-4">
-            <motion.div
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.97 }}
-              animate={{ boxShadow: ["0 0 0px #57BC67", "0 0 20px #57BC6788", "0 0 0px #57BC67"] }}
-              transition={{ boxShadow: { repeat: Infinity, duration: 2.5 } }}
-            >
-              <Link
-                href="/login"
-                className="inline-block bg-[#57BC67] text-white px-10 py-3.5 rounded-full font-bold text-lg hover:bg-[#4aab5a] transition-colors"
+            <Link href="/login">
+              <motion.button
+                className="bg-[#57BC67] text-white px-10 py-3.5 rounded-full font-bold text-lg cursor-pointer"
+                whileHover={{ scale: 1.04, backgroundColor: "#4aab5a" }}
+                whileTap={{ scale: 0.96 }}
+                animate={{ boxShadow: ["0 0 0px #57BC67", "0 0 22px #57BC6799", "0 0 0px #57BC67"] }}
+                transition={{ boxShadow: { repeat: Infinity, duration: 2.4, ease: "easeInOut" }, scale: { duration: 0.15 } }}
               >
                 Começar agora
-              </Link>
-            </motion.div>
+              </motion.button>
+            </Link>
 
             <Link
               href="/login"
