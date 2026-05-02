@@ -54,10 +54,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-64 flex-col border-r border-border bg-sidebar h-screen sticky top-0">
         <div className="p-6 flex items-center gap-3">
-          <div className="w-10 h-10 flex-shrink-0"><XMark /></div>
+          <div className="w-10 h-10 flex-shrink-0 relative">
+            <XMark />
+          </div>
           <div className="w-px h-10 bg-border/50 mx-1" />
           <div className="flex flex-col">
-            <span className="font-title font-bold text-lg text-foreground leading-tight">
+            <span className="font-title font-bold text-lg leading-tight">
+              <span className="text-primary">X²</span>{" "}
               <span className="text-foreground">Kê</span><span className="text-primary">Quadrática</span>
             </span>
             <span className="text-[9px] text-muted-foreground uppercase tracking-widest">Inteligência Financeira</span>

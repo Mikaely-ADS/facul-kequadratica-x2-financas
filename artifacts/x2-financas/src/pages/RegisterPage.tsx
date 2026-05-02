@@ -28,13 +28,17 @@ export default function RegisterPage() {
       {/* Left side — Brand */}
       <div className="relative hidden md:flex flex-1 flex-col justify-between px-14 lg:px-20 py-10 bg-gradient-to-b from-[#d6f0da] via-[#c2e6c9] to-[#a8d5b0] overflow-hidden">
         <div className="flex items-center gap-4">
-          <svg width="44" height="44" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <line x1="4" y1="4" x2="32" y2="32" stroke="#57BC67" strokeWidth="5" strokeLinecap="round"/>
-            <line x1="32" y1="4" x2="4" y2="32" stroke="#57BC67" strokeWidth="5" strokeLinecap="round"/>
-            <text x="22" y="14" fill="#57BC67" fontSize="11" fontWeight="bold" fontFamily="sans-serif">²</text>
-          </svg>
+          <div className="relative w-11 h-11 flex-shrink-0">
+            <svg width="44" height="44" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="4" y1="4" x2="32" y2="32" stroke="#57BC67" strokeWidth="5" strokeLinecap="round"/>
+              <line x1="32" y1="4" x2="4" y2="32" stroke="#57BC67" strokeWidth="5" strokeLinecap="round"/>
+            </svg>
+            <span style={{ position:"absolute", top:0, right:"-3px", color:"#57BC67", fontWeight:700, fontSize:"11px", lineHeight:1 }}>2</span>
+          </div>
           <div>
-            <div className="font-bold text-2xl tracking-tight text-gray-900">KêQuadrática</div>
+            <div className="font-bold text-2xl tracking-tight text-gray-900">
+              <span className="text-[#57BC67]">X²</span> KêQuadrática
+            </div>
             <div className="text-[11px] text-gray-500 uppercase tracking-widest">Inteligência Financeira</div>
           </div>
         </div>
