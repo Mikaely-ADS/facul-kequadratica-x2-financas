@@ -64,7 +64,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <span className="text-[9px] text-muted-foreground uppercase tracking-widest">Inteligência Financeira</span>
           </div>
         </div>
-        
+
         <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
           {NAV_ITEMS.map((item) => {
             const isActive = location === item.href;
@@ -109,7 +109,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </div>
             <Switch checked={theme === "dark"} onCheckedChange={toggle} />
           </div>
-          
+
           <button 
             onClick={() => setLocation("/login")}
             className="flex items-center gap-2 px-2 py-2 mb-4 w-full rounded-md text-sm font-medium text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
@@ -117,7 +117,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <LogOut className="w-4 h-4" />
             <span>Sair</span>
           </button>
-          
+
           <div className="flex items-center gap-3 px-2">
             <Avatar>
               <AvatarFallback className="bg-primary/20 text-primary font-bold">MA</AvatarFallback>
@@ -165,7 +165,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </Popover>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-3">
             <Popover>
               <PopoverTrigger asChild>

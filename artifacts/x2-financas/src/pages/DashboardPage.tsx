@@ -199,12 +199,8 @@ export default function DashboardPage() {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-            </CardContent>
-          </Card>
 
-          <Card className="bg-card border-border mt-4">
-            <CardContent className="pt-4">
-              <div className="space-y-2">
+              <div className="mt-3 space-y-2">
                 {(expenses || []).map((entry, index) => (
                   <div key={index} className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
