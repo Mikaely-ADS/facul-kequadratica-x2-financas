@@ -3,6 +3,7 @@ import { Switch, Route } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 import { AppShell } from "@/components/AppShell";
 import LoginPage from "@/pages/LoginPage";

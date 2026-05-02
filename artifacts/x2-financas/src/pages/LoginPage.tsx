@@ -80,7 +80,7 @@ export default function LoginPage() {
                   <Input 
                     id="email" 
                     type="email" 
-                    placeholder="mikauly@exemplo.com" 
+                    placeholder="mikaely@exemplo.com" 
                     required 
                     className="bg-background"
                   />

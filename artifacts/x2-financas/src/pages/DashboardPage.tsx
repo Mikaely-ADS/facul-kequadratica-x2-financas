@@ -1,6 +1,5 @@
 import React from "react";
 import { formatBRL } from "@/lib/format";
-import { CHART_COLORS } from "@/lib/chartColors";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -26,6 +25,15 @@ export default function DashboardPage() {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0 }
   };
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return "Bom dia";
+    if (hour >= 12 && hour < 18) return "Boa tarde";
+    return "Boa noite";
+  };
+
+  const DONUT_COLORS = ['#57BC67', '#3D9B52', '#7FD18A', '#2563EB', '#7C3AED', '#EA580C', '#DC2626'];
 
   if (isLoadingSummary || isLoadingWeekly || isLoadingExpenses) {
     return (
@@ -53,7 +61,7 @@ export default function DashboardPage() {
       animate="show"
     >
       <div>
-        <h2 className="text-3xl font-bold font-title text-foreground">Bom dia, Mikauly Alves</h2>
+        <h2 className="text-3xl font-bold font-title text-foreground">{getGreeting()}, Mikaely Alves</h2>
         <p className="text-muted-foreground mt-1">Aqui está o resumo da sua vida financeira hoje.</p>
       </div>
 
@@ -208,8 +216,8 @@ export default function DashboardPage() {
             <CardHeader>
               <CardTitle className="text-lg font-bold">Despesas por Categoria</CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col items-center justify-center">
-              <div className="h-[250px] w-full">
+            <CardContent className="flex flex-col h-[calc(100%-4rem)]">
+              <div className="flex-1 min-h-[250px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -217,30 +225,45 @@ export default function DashboardPage() {
                       cx="50%"
                       cy="50%"
                       innerRadius={60}
-                      outerRadius={80}
+                      outerRadius={90}
                       paddingAngle={5}
                       dataKey="amount"
                       stroke="none"
+                      labelLine={false}
+                      label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+                        const RADIAN = Math.PI / 180;
+                        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                        const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                        const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                        return percent > 0.05 ? (
+                          <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central" fontSize={11} fontWeight="bold">
+                            {(percent * 100).toFixed(0)}%
+                          </text>
+                        ) : null;
+                      }}
                     >
                       {(expenses || []).map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                        <Cell key={`cell-${index}`} fill={DONUT_COLORS[index % DONUT_COLORS.length]} />
                       ))}
                     </Pie>
                     <Tooltip 
                       contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--primary))', borderLeftWidth: '4px', color: 'hsl(var(--foreground))' }}
-                      formatter={(value: number) => [formatBRL(value), 'Valor']}
+                      formatter={(value: number, name: string, props: any) => [formatBRL(value), 'Valor']}
                     />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="w-full mt-4 space-y-2">
+              <div className="w-full mt-4 space-y-2 overflow-y-auto max-h-32">
                 {(expenses || []).map((entry, index) => (
-                  <div key={index} className="flex items-center justify-between text-sm">
+                  <div key={index} className="flex items-center justify-between text-sm px-1">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }} />
-                      <span className="text-muted-foreground">{entry.category}</span>
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: DONUT_COLORS[index % DONUT_COLORS.length] }} />
+                      <span className="text-muted-foreground truncate max-w-[120px]">{entry.category}</span>
                     </div>
-                    <span className="font-medium">{entry.percentage}%</span>
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium text-foreground">{formatBRL(entry.amount)}</span>
+                      <span className="text-muted-foreground w-8 text-right">{entry.percentage}%</span>
+                    </div>
                   </div>
                 ))}
               </div>
