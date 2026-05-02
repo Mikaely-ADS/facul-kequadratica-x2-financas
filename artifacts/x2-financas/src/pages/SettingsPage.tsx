@@ -37,7 +37,6 @@ export default function SettingsPage() {
     >
       <div>
         <h2 className="text-3xl font-bold font-title text-foreground">Configurações</h2>
-        <p className="text-muted-foreground mt-1">Gerencie suas preferências de conta e segurança.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

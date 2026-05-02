@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { formatBRL, formatDate } from "@/lib/format";
 import { useListGoals, useCreateGoal, useUpdateGoal, useDeleteGoal, getListGoalsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -118,7 +118,7 @@ export default function GoalsPage() {
         </div>
         <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
+            <Button className="gap-2 bg-[#57BC67] hover:bg-[#57BC67]/90 text-white">
               <Plus className="w-4 h-4" /> Nova Meta
             </Button>
           </DialogTrigger>
@@ -160,20 +160,20 @@ export default function GoalsPage() {
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[1,2,3].map(i => <Skeleton key={i} className="h-64 w-full rounded-xl" />)}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {[1,2,3].map(i => <Skeleton key={i} className="h-[280px] w-full rounded-xl" />)}
         </div>
       ) : goals?.length === 0 ? (
-        <Card className="bg-card border-border border-dashed">
-          <CardContent className="flex flex-col items-center justify-center h-64 text-center">
+        <Card className="bg-[#2A2A2A] border-0">
+          <CardContent className="flex flex-col items-center justify-center h-[280px] text-center">
             <Target className="w-12 h-12 text-muted-foreground mb-4 opacity-50" />
-            <h3 className="text-lg font-medium">Nenhuma meta cadastrada</h3>
+            <h3 className="text-lg font-medium text-white">Nenhuma meta cadastrada</h3>
             <p className="text-sm text-muted-foreground mt-1 mb-4">Crie sua primeira meta para começar a poupar.</p>
             <Button onClick={() => setIsNewDialogOpen(true)} variant="outline">Criar Meta</Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           <AnimatePresence>
             {goals?.map((goal) => {
               const progress = Math.min(100, Math.round((goal.currentAmount / goal.targetAmount) * 100));
@@ -186,45 +186,44 @@ export default function GoalsPage() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <Card className="bg-card border-border hover-elevate overflow-hidden flex flex-col h-full group">
-                    <CardHeader className="pb-2">
-                      <div className="flex justify-between items-start">
-                        <Badge variant="outline" className="bg-secondary text-secondary-foreground border-transparent font-medium">
-                          {goal.category}
-                        </Badge>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity -mr-2 -mt-2"
-                          onClick={() => handleDelete(goal.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                  <div className="bg-[#2A2A2A] rounded-xl p-5 flex flex-col h-full relative group">
+                    <div className="flex justify-between items-start mb-4">
+                      <Badge variant="outline" className="border-muted-foreground/30 text-muted-foreground bg-transparent font-medium rounded-full text-xs">
+                        {goal.category}
+                      </Badge>
+                      <button 
+                        className="text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => handleDelete(goal.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-white mb-4 line-clamp-1">{goal.name}</h3>
+                    
+                    <div className="mt-auto">
+                      <div className="text-[28px] font-bold text-[#57BC67] tracking-tight leading-none mb-1">
+                        {formatBRL(goal.currentAmount)}
                       </div>
-                      <CardTitle className="text-xl mt-2">{goal.name}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="pb-4 flex-1">
-                      <div className="flex items-end gap-2 mt-4">
-                        <span className="text-3xl font-bold font-title tracking-tight text-primary">
-                          {formatBRL(goal.currentAmount)}
-                        </span>
-                      </div>
-                      <div className="text-sm text-muted-foreground mt-1">
+                      <div className="text-sm text-muted-foreground mb-4">
                         de {formatBRL(goal.targetAmount)}
                       </div>
                       
-                      <div className="mt-6 space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="font-medium text-foreground">{progress}% concluído</span>
-                          <span className="text-muted-foreground text-xs">Até {formatDate(goal.deadline)}</span>
-                        </div>
-                        <Progress value={progress} className="h-2 bg-secondary" />
+                      <div className="w-full bg-black/40 h-2 rounded-full overflow-hidden mb-2">
+                        <div 
+                          className="bg-[#57BC67] h-full transition-all duration-500 ease-out" 
+                          style={{ width: `${progress}%` }}
+                        />
                       </div>
-                    </CardContent>
-                    <CardFooter className="pt-0 border-t border-border mt-auto pt-4 pb-4">
+                      
+                      <div className="flex justify-between text-xs mb-5">
+                        <span className="font-medium text-white">{progress}% concluído</span>
+                        <span className="text-muted-foreground">Até {formatDate(goal.deadline)}</span>
+                      </div>
+                      
                       <Dialog open={aporteGoalId === goal.id} onOpenChange={(open) => !open && setAporteGoalId(null)}>
                         <DialogTrigger asChild>
-                          <Button variant="secondary" className="w-full" onClick={() => setAporteGoalId(goal.id)}>
+                          <Button variant="ghost" className="w-full border border-border/50 text-white hover:bg-white/5 transition-colors h-10">
                             + Aportar
                           </Button>
                         </DialogTrigger>
@@ -246,15 +245,15 @@ export default function GoalsPage() {
                               />
                             </div>
                             <DialogFooter>
-                              <Button type="submit" disabled={updateGoal.isPending || !aporteAmount}>
+                              <Button type="submit" disabled={updateGoal.isPending || !aporteAmount} className="bg-[#57BC67] text-white hover:bg-[#57BC67]/90">
                                 Confirmar
                               </Button>
                             </DialogFooter>
                           </form>
                         </DialogContent>
                       </Dialog>
-                    </CardFooter>
-                  </Card>
+                    </div>
+                  </div>
                 </motion.div>
               );
             })}

@@ -6,10 +6,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/context/ThemeContext";
 
 import { AppShell } from "@/components/AppShell";
+import LandingPage from "@/pages/LandingPage";
 import LoginPage from "@/pages/LoginPage";
 import DashboardPage from "@/pages/DashboardPage";
 import CashflowPage from "@/pages/CashflowPage";
 import GoalsPage from "@/pages/GoalsPage";
+import DespesasPage from "@/pages/DespesasPage";
 import CardsPage from "@/pages/CardsPage";
 import InsightsPage from "@/pages/InsightsPage";
 import SettingsPage from "@/pages/SettingsPage";
@@ -20,10 +22,11 @@ const queryClient = new QueryClient();
 function Router() {
   return (
     <Switch>
+      <Route path="/" component={LandingPage} />
       <Route path="/login" component={LoginPage} />
       
       {/* Routes wrapped in AppShell */}
-      <Route path="/">
+      <Route path="/dashboard">
         <AppShell><DashboardPage /></AppShell>
       </Route>
       <Route path="/fluxo-caixa">
@@ -31,6 +34,9 @@ function Router() {
       </Route>
       <Route path="/metas">
         <AppShell><GoalsPage /></AppShell>
+      </Route>
+      <Route path="/despesas">
+        <AppShell><DespesasPage /></AppShell>
       </Route>
       <Route path="/cartoes">
         <AppShell><CardsPage /></AppShell>

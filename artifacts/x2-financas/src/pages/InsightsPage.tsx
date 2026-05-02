@@ -1,18 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { formatBRL, formatDate } from "@/lib/format";
 import { useListTransactions } from "@workspace/api-client-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
-import { ArrowDownRight, ArrowUpRight, TrendingUp } from "lucide-react";
+import { Search, Plus, CreditCard, ShoppingBag, Coffee, Home, Car, Heart, DollarSign, Briefcase } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function InsightsPage() {
   const { data: transactions, isLoading } = useListTransactions();
+  const [search, setSearch] = useState("");
 
-  // Sort by date desc to simulate "recent"
-  const recentTransactions = transactions 
-    ? [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 15)
+  const filteredTransactions = transactions
+    ? [...transactions]
+        .filter(t => t.description.toLowerCase().includes(search.toLowerCase()))
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 20)
     : [];
 
   const getCategoryColor = (category: string) => {
@@ -29,80 +34,115 @@ export default function InsightsPage() {
     return colors[category] || "bg-gray-500/10 text-gray-500 border-gray-500/20";
   };
 
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case "Alimentação": return <Coffee className="w-4 h-4" />;
+      case "Casa": return <Home className="w-4 h-4" />;
+      case "Lazer": return <ShoppingBag className="w-4 h-4" />;
+      case "Transporte": return <Car className="w-4 h-4" />;
+      case "Saúde": return <Heart className="w-4 h-4" />;
+      case "Renda Extra": return <DollarSign className="w-4 h-4" />;
+      case "Salário": return <Briefcase className="w-4 h-4" />;
+      case "Investimentos": return <CreditCard className="w-4 h-4" />;
+      default: return <CreditCard className="w-4 h-4" />;
+    }
+  };
+
+  const getStatus = (dateStr: string) => {
+    const isPast = new Date(dateStr).getTime() <= new Date().getTime();
+    return isPast ? "Concluído" : "Pendente";
+  };
+
   return (
     <motion.div 
-      className="space-y-6 max-w-4xl mx-auto"
+      className="space-y-6 max-w-5xl mx-auto"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
       <div>
         <h2 className="text-3xl font-bold font-title text-foreground">Insights Financeiros</h2>
-        <p className="text-muted-foreground mt-1">Análise inteligente dos seus hábitos de consumo recentes.</p>
       </div>
 
-      <Card className="bg-primary/5 border-primary/20">
-        <CardContent className="flex items-start gap-4 pt-6">
-          <div className="p-3 bg-primary/20 rounded-full">
-            <TrendingUp className="w-6 h-6 text-primary" />
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-8">
+        <h3 className="text-xl font-bold font-title">Transações Recentes</h3>
+        <div className="flex items-center gap-4 w-full sm:w-auto">
+          <div className="relative w-full sm:w-64">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input 
+              type="text" 
+              placeholder="Buscar..." 
+              className="pl-8 bg-card"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
-          <div>
-            <h3 className="font-semibold text-lg text-foreground">Bom controle de despesas</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              Suas despesas com Lazer estão 15% menores nesta semana em comparação com a média do mês passado. 
-              Continue assim para atingir sua Meta de Lucro mais rápido.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+          <Button className="bg-[#5c47e0] hover:bg-[#5c47e0]/90 text-white whitespace-nowrap">
+            <Plus className="w-4 h-4 mr-2" /> Nova Transação
+          </Button>
+        </div>
+      </div>
 
       <Card className="bg-card border-border">
-        <CardHeader>
-          <CardTitle>Transações Recentes</CardTitle>
-          <CardDescription>Sua atividade mais recente analisada.</CardDescription>
-        </CardHeader>
         <CardContent className="p-0">
           {isLoading ? (
             <div className="p-6 space-y-4">
               {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-16 w-full" />)}
             </div>
-          ) : recentTransactions.length === 0 ? (
+          ) : filteredTransactions.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
-              Nenhuma transação recente encontrada.
+              Nenhuma transação encontrada.
             </div>
           ) : (
-            <div className="divide-y divide-border">
-              {recentTransactions.map((t, i) => (
-                <motion.div 
-                  key={t.id} 
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  className="flex items-center justify-between p-4 sm:p-6 hover:bg-muted/30 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`p-2 rounded-full ${t.type === 'income' ? 'bg-primary/10' : 'bg-destructive/10'}`}>
-                      {t.type === 'income' ? 
-                        <ArrowUpRight className="w-5 h-5 text-primary" /> : 
-                        <ArrowDownRight className="w-5 h-5 text-destructive" />
-                      }
-                    </div>
-                    <div>
-                      <p className="font-medium text-foreground">{t.description}</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-muted-foreground">{formatDate(t.date)}</span>
-                        <span className="text-muted-foreground text-xs">•</span>
-                        <Badge variant="outline" className={`text-[10px] uppercase tracking-wider font-semibold border ${getCategoryColor(t.category)}`}>
-                          {t.category}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                  <div className={`font-bold font-mono tracking-tight ${t.type === 'income' ? 'text-primary' : 'text-destructive'}`}>
-                    {t.type === 'income' ? '+' : '-'}{formatBRL(t.amount)}
-                  </div>
-                </motion.div>
-              ))}
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-muted-foreground uppercase bg-muted/50 border-b border-border">
+                  <tr>
+                    <th className="px-6 py-4 font-medium">Data</th>
+                    <th className="px-6 py-4 font-medium">Descrição</th>
+                    <th className="px-6 py-4 font-medium">Categoria</th>
+                    <th className="px-6 py-4 font-medium text-right">Valor</th>
+                    <th className="px-6 py-4 font-medium text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {filteredTransactions.map((t, i) => {
+                    const status = getStatus(t.date);
+                    return (
+                      <motion.tr 
+                        key={t.id} 
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="hover:bg-muted/30 transition-colors"
+                      >
+                        <td className="px-6 py-4 text-muted-foreground whitespace-nowrap">{formatDate(t.date)}</td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <div className={`p-2 rounded-full ${t.type === 'income' ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
+                              {getCategoryIcon(t.category)}
+                            </div>
+                            <span className="font-medium text-foreground">{t.description}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <Badge variant="outline" className={`font-medium ${getCategoryColor(t.category)} border-0`}>
+                            {t.category}
+                          </Badge>
+                        </td>
+                        <td className={`px-6 py-4 text-right font-bold whitespace-nowrap ${t.type === 'income' ? 'text-primary' : 'text-destructive'}`}>
+                          {t.type === 'income' ? '+' : '-'}{formatBRL(t.amount)}
+                        </td>
+                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                          <span className={`font-medium ${status === 'Concluído' ? 'text-muted-foreground' : 'text-orange-500'}`}>
+                            {status}
+                          </span>
+                        </td>
+                      </motion.tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           )}
         </CardContent>

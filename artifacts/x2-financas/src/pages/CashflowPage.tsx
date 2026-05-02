@@ -36,10 +36,8 @@ export default function CashflowPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { data: cashflow, isLoading: isLoadingCashflow } = useGetCashflow();
-  const { data: transactions, isLoading: isLoadingTransactions } = useListTransactions();
   
   const createTransaction = useCreateTransaction();
-  const deleteTransaction = useDeleteTransaction();
 
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionSchema),
@@ -74,26 +72,9 @@ export default function CashflowPage() {
     );
   };
 
-  const handleDelete = (id: number) => {
-    if (confirm("Tem certeza que deseja excluir esta transação?")) {
-      deleteTransaction.mutate(
-        { id },
-        {
-          onSuccess: () => {
-            toast({ title: "Transação excluída" });
-            queryClient.invalidateQueries({ queryKey: getListTransactionsQueryKey() });
-            queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
-            queryClient.invalidateQueries({ queryKey: getGetCashflowQueryKey() });
-            queryClient.invalidateQueries({ queryKey: getGetExpensesByCategoryQueryKey() });
-            queryClient.invalidateQueries({ queryKey: getGetWeeklyPerformanceQueryKey() });
-          },
-          onError: () => {
-            toast({ title: "Erro ao excluir transação", variant: "destructive" });
-          }
-        }
-      );
-    }
-  };
+  const totalIncome = cashflow?.reduce((acc, curr) => acc + curr.income, 0) || 0;
+  const totalExpense = cashflow?.reduce((acc, curr) => acc + curr.expense, 0) || 0;
+  const totalNet = totalIncome - totalExpense;
 
   return (
     <motion.div 
@@ -252,9 +233,9 @@ export default function CashflowPage() {
                     ]}
                   />
                   <Legend />
-                  <Line type="monotone" dataKey="income" name="income" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="expense" name="expense" stroke="hsl(var(--destructive))" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="net" name="net" stroke="#ffffff" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="income" name="Entradas" stroke="#57BC67" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="expense" name="Saídas" stroke="#E5484D" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="net" name="Líquido" stroke="#FFFFFF" strokeWidth={2} strokeDasharray="5 5" dot={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -264,10 +245,10 @@ export default function CashflowPage() {
 
       <Card className="bg-card border-border overflow-hidden">
         <CardHeader>
-          <CardTitle className="text-lg">Histórico de Transações</CardTitle>
+          <CardTitle className="text-lg">Extrato de Fluxo de Caixa</CardTitle>
         </CardHeader>
         <div className="overflow-x-auto">
-          {isLoadingTransactions ? (
+          {isLoadingCashflow ? (
             <div className="p-4 space-y-3">
               {[1,2,3].map(i => <Skeleton key={i} className="h-12 w-full" />)}
             </div>
@@ -276,47 +257,52 @@ export default function CashflowPage() {
               <TableHeader>
                 <TableRow className="border-border hover:bg-transparent">
                   <TableHead>Data</TableHead>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead>Método</TableHead>
-                  <TableHead className="text-right">Valor</TableHead>
-                  <TableHead className="w-12"></TableHead>
+                  <TableHead className="text-right">Entradas</TableHead>
+                  <TableHead className="text-right">Saídas</TableHead>
+                  <TableHead className="text-right">Líquido</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {transactions?.length === 0 ? (
+                {cashflow?.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center text-muted-foreground h-24">
-                      Nenhuma transação encontrada.
+                    <TableCell colSpan={4} className="text-center text-muted-foreground h-24">
+                      Nenhum fluxo de caixa encontrado.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  transactions?.map((t) => (
-                    <TableRow key={t.id} className="border-border hover:bg-muted/50 group">
-                      <TableCell className="font-medium text-muted-foreground">
-                        {formatDate(t.date)}
+                  <>
+                    {cashflow?.map((c, i) => {
+                      const net = c.income - c.expense;
+                      return (
+                        <TableRow key={i} className="border-border hover:bg-muted/50">
+                          <TableCell className="font-medium text-muted-foreground">
+                            {formatDate(c.date)}
+                          </TableCell>
+                          <TableCell className="text-right font-medium text-[#57BC67]">
+                            {formatBRL(c.income)}
+                          </TableCell>
+                          <TableCell className="text-right font-medium text-[#E5484D]">
+                            {formatBRL(c.expense)}
+                          </TableCell>
+                          <TableCell className={`text-right font-medium ${net >= 0 ? "text-white" : "text-white"}`}>
+                            {formatBRL(net)}
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                    <TableRow className="bg-muted/30">
+                      <TableCell className="font-bold">Total</TableCell>
+                      <TableCell className="text-right font-bold text-[#57BC67]">
+                        {formatBRL(totalIncome)}
                       </TableCell>
-                      <TableCell>{t.description}</TableCell>
-                      <TableCell>{t.category}</TableCell>
-                      <TableCell>{t.paymentMethod}</TableCell>
-                      <TableCell className="text-right font-medium">
-                        <span className={t.type === "income" ? "text-primary" : "text-destructive"}>
-                          {t.type === "income" ? "+" : "-"}{formatBRL(t.amount)}
-                        </span>
+                      <TableCell className="text-right font-bold text-[#E5484D]">
+                        {formatBRL(totalExpense)}
                       </TableCell>
-                      <TableCell>
-                        <Button 
-                          variant="ghost" 
-                          size="icon" 
-                          className="h-8 w-8 text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => handleDelete(t.id)}
-                          disabled={deleteTransaction.isPending}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                      <TableCell className="text-right font-bold text-white">
+                        {formatBRL(totalNet)}
                       </TableCell>
                     </TableRow>
-                  ))
+                  </>
                 )}
               </TableBody>
             </Table>
