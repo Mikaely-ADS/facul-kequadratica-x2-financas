@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { formatBRL, formatDate } from "@/lib/format";
 import { useGetCashflow, useListTransactions, useCreateTransaction, useDeleteTransaction, getListTransactionsQueryKey, getGetDashboardSummaryQueryKey, getGetCashflowQueryKey, getGetExpensesByCategoryQueryKey, getGetWeeklyPerformanceQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -14,8 +14,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { Plus, Trash2, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from "recharts";
+import { Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 
@@ -30,13 +30,27 @@ const transactionSchema = z.object({
 
 type TransactionFormValues = z.infer<typeof transactionSchema>;
 
+const CashflowTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{ background: '#1a2a1a', border: '1px solid #57BC67', borderRadius: 8, padding: '10px 14px', minWidth: 160 }}>
+      <p style={{ color: '#ffffff', fontWeight: 700, marginBottom: 6, fontSize: 13 }}>{label}</p>
+      {payload.map((p: any, i: number) => (
+        <p key={i} style={{ color: p.color, margin: '2px 0', fontSize: 13 }}>
+          {p.name}: {formatBRL(p.value)}
+        </p>
+      ))}
+    </div>
+  );
+};
+
 export default function CashflowPage() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const { data: cashflow, isLoading: isLoadingCashflow } = useGetCashflow();
-  
+
   const createTransaction = useCreateTransaction();
 
   const form = useForm<TransactionFormValues>({
@@ -72,12 +86,22 @@ export default function CashflowPage() {
     );
   };
 
-  const totalIncome = cashflow?.reduce((acc, curr) => acc + curr.income, 0) || 0;
-  const totalExpense = cashflow?.reduce((acc, curr) => acc + curr.expense, 0) || 0;
+  // Compute net = income - expense on the client since API doesn't return it
+  const chartData = useMemo(() =>
+    (cashflow || []).map(c => ({
+      ...c,
+      date: formatDate(c.date, 'dd/MM'),
+      net: c.income - c.expense,
+    })),
+    [cashflow]
+  );
+
+  const totalIncome = cashflow?.reduce((acc, c) => acc + c.income, 0) || 0;
+  const totalExpense = cashflow?.reduce((acc, c) => acc + c.expense, 0) || 0;
   const totalNet = totalIncome - totalExpense;
 
   return (
-    <motion.div 
+    <motion.div
       className="space-y-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -90,9 +114,7 @@ export default function CashflowPage() {
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
-              <Plus className="w-4 h-4" /> Nova Transação
-            </Button>
+            <Button className="gap-2"><Plus className="w-4 h-4" /> Nova Transação</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
@@ -101,33 +123,23 @@ export default function CashflowPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
               <div className="space-y-2">
                 <Label>Tipo</Label>
-                <Controller
-                  name="type"
-                  control={form.control}
-                  render={({ field }) => (
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex items-center gap-4"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="expense" id="r-expense" />
-                        <Label htmlFor="r-expense" className="text-destructive">Saída</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="income" id="r-income" />
-                        <Label htmlFor="r-income" className="text-primary">Entrada</Label>
-                      </div>
-                    </RadioGroup>
-                  )}
-                />
+                <Controller name="type" control={form.control} render={({ field }) => (
+                  <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex items-center gap-4">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="expense" id="r-expense" />
+                      <Label htmlFor="r-expense" className="text-destructive">Saída</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="income" id="r-income" />
+                      <Label htmlFor="r-income" className="text-primary">Entrada</Label>
+                    </div>
+                  </RadioGroup>
+                )} />
               </div>
-
               <div className="space-y-2">
                 <Label htmlFor="description">Descrição</Label>
                 <Input id="description" {...form.register("description")} placeholder="Ex: Mercado" />
               </div>
-
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="amount">Valor</Label>
@@ -138,55 +150,40 @@ export default function CashflowPage() {
                   <Input id="date" type="date" {...form.register("date")} />
                 </div>
               </div>
-
               <div className="space-y-2">
                 <Label>Categoria</Label>
-                <Controller
-                  name="category"
-                  control={form.control}
-                  render={({ field }) => (
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Alimentação">Alimentação</SelectItem>
-                        <SelectItem value="Casa">Casa</SelectItem>
-                        <SelectItem value="Lazer">Lazer</SelectItem>
-                        <SelectItem value="Transporte">Transporte</SelectItem>
-                        <SelectItem value="Saúde">Saúde</SelectItem>
-                        <SelectItem value="Educação">Educação</SelectItem>
-                        <SelectItem value="Renda Extra">Renda Extra</SelectItem>
-                        <SelectItem value="Salário">Salário</SelectItem>
-                        <SelectItem value="Investimentos">Investimentos</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
+                <Controller name="category" control={form.control} render={({ field }) => (
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Alimentação">Alimentação</SelectItem>
+                      <SelectItem value="Casa">Casa</SelectItem>
+                      <SelectItem value="Lazer">Lazer</SelectItem>
+                      <SelectItem value="Transporte">Transporte</SelectItem>
+                      <SelectItem value="Saúde">Saúde</SelectItem>
+                      <SelectItem value="Educação">Educação</SelectItem>
+                      <SelectItem value="Renda Extra">Renda Extra</SelectItem>
+                      <SelectItem value="Salário">Salário</SelectItem>
+                      <SelectItem value="Investimentos">Investimentos</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )} />
               </div>
-
               <div className="space-y-2">
                 <Label>Método de Pagamento</Label>
-                <Controller
-                  name="paymentMethod"
-                  control={form.control}
-                  render={({ field }) => (
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="PIX">PIX</SelectItem>
-                        <SelectItem value="Cartão Crédito">Cartão de Crédito</SelectItem>
-                        <SelectItem value="Cartão Débito">Cartão de Débito</SelectItem>
-                        <SelectItem value="Boleto">Boleto</SelectItem>
-                        <SelectItem value="Transferência">Transferência</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  )}
-                />
+                <Controller name="paymentMethod" control={form.control} render={({ field }) => (
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PIX">PIX</SelectItem>
+                      <SelectItem value="Cartão Crédito">Cartão de Crédito</SelectItem>
+                      <SelectItem value="Cartão Débito">Cartão de Débito</SelectItem>
+                      <SelectItem value="Boleto">Boleto</SelectItem>
+                      <SelectItem value="Transferência">Transferência</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )} />
               </div>
-
               <DialogFooter>
                 <Button type="submit" disabled={createTransaction.isPending}>
                   {createTransaction.isPending ? "Salvando..." : "Salvar"}
@@ -207,35 +204,35 @@ export default function CashflowPage() {
           <CardContent>
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={cashflow || []} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
+                <LineChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                  <XAxis 
-                    dataKey="date" 
-                    stroke="hsl(var(--muted-foreground))" 
-                    fontSize={12} 
-                    tickLine={false} 
+                  <XAxis
+                    dataKey="date"
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={11}
+                    tickLine={false}
                     axisLine={false}
-                    tickFormatter={(val) => formatDate(val, 'dd/MM')}
                   />
-                  <YAxis 
-                    stroke="hsl(var(--muted-foreground))" 
-                    fontSize={12} 
-                    tickLine={false} 
+                  <YAxis
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={11}
+                    tickLine={false}
                     axisLine={false}
-                    tickFormatter={(val) => `R$${val/1000}k`}
+                    tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
                   />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--primary))', borderLeftWidth: '4px', color: 'hsl(var(--foreground))' }}
-                    labelFormatter={(val) => formatDate(val as string, 'dd/MM/yyyy')}
-                    formatter={(value: number, name: string) => [
-                      formatBRL(value), 
-                      name === 'income' ? 'Entradas' : name === 'expense' ? 'Saídas' : 'Líquido'
-                    ]}
+                  <ReferenceLine y={0} stroke="hsl(var(--border))" strokeWidth={1} />
+                  <Tooltip content={<CashflowTooltip />} />
+                  <Legend
+                    iconType="circle"
+                    iconSize={8}
+                    wrapperStyle={{ fontSize: 12, paddingTop: 8 }}
+                    formatter={(value) =>
+                      value === 'income' ? 'Entradas' : value === 'expense' ? 'Saídas' : 'Líquido'
+                    }
                   />
-                  <Legend />
-                  <Line type="monotone" dataKey="income" name="Entradas" stroke="#57BC67" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="expense" name="Saídas" stroke="#E5484D" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="net" name="Líquido" stroke="#FFFFFF" strokeWidth={2} strokeDasharray="5 5" dot={false} />
+                  <Line type="monotone" dataKey="income" name="income" stroke="#57BC67" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="expense" name="expense" stroke="#E5484D" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="net" name="net" stroke="#ffffff" strokeWidth={2} strokeDasharray="5 5" dot={false} activeDot={{ r: 4 }} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -249,16 +246,14 @@ export default function CashflowPage() {
         </CardHeader>
         <div className="overflow-x-auto">
           {isLoadingCashflow ? (
-            <div className="p-4 space-y-3">
-              {[1,2,3].map(i => <Skeleton key={i} className="h-12 w-full" />)}
-            </div>
+            <div className="p-4 space-y-3">{[1,2,3].map(i => <Skeleton key={i} className="h-12 w-full" />)}</div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow className="border-border hover:bg-transparent">
                   <TableHead>Data</TableHead>
-                  <TableHead className="text-right">Entradas</TableHead>
-                  <TableHead className="text-right">Saídas</TableHead>
+                  <TableHead className="text-right text-[#57BC67]">Entradas</TableHead>
+                  <TableHead className="text-right text-[#E5484D]">Saídas</TableHead>
                   <TableHead className="text-right">Líquido</TableHead>
                 </TableRow>
               </TableHeader>
@@ -275,32 +270,20 @@ export default function CashflowPage() {
                       const net = c.income - c.expense;
                       return (
                         <TableRow key={i} className="border-border hover:bg-muted/50">
-                          <TableCell className="font-medium text-muted-foreground">
-                            {formatDate(c.date)}
-                          </TableCell>
-                          <TableCell className="text-right font-medium text-[#57BC67]">
-                            {formatBRL(c.income)}
-                          </TableCell>
-                          <TableCell className="text-right font-medium text-[#E5484D]">
-                            {formatBRL(c.expense)}
-                          </TableCell>
-                          <TableCell className={`text-right font-medium ${net >= 0 ? "text-white" : "text-white"}`}>
+                          <TableCell className="font-medium text-muted-foreground">{formatDate(c.date)}</TableCell>
+                          <TableCell className="text-right font-medium text-[#57BC67]">{c.income > 0 ? formatBRL(c.income) : "—"}</TableCell>
+                          <TableCell className="text-right font-medium text-[#E5484D]">{c.expense > 0 ? formatBRL(c.expense) : "—"}</TableCell>
+                          <TableCell className={`text-right font-medium ${net >= 0 ? "text-[#57BC67]" : "text-[#E5484D]"}`}>
                             {formatBRL(net)}
                           </TableCell>
                         </TableRow>
                       );
                     })}
-                    <TableRow className="bg-muted/30">
-                      <TableCell className="font-bold">Total</TableCell>
-                      <TableCell className="text-right font-bold text-[#57BC67]">
-                        {formatBRL(totalIncome)}
-                      </TableCell>
-                      <TableCell className="text-right font-bold text-[#E5484D]">
-                        {formatBRL(totalExpense)}
-                      </TableCell>
-                      <TableCell className="text-right font-bold text-white">
-                        {formatBRL(totalNet)}
-                      </TableCell>
+                    <TableRow className="bg-muted/30 font-bold">
+                      <TableCell>Total</TableCell>
+                      <TableCell className="text-right text-[#57BC67]">{formatBRL(totalIncome)}</TableCell>
+                      <TableCell className="text-right text-[#E5484D]">{formatBRL(totalExpense)}</TableCell>
+                      <TableCell className={`text-right ${totalNet >= 0 ? "text-[#57BC67]" : "text-[#E5484D]"}`}>{formatBRL(totalNet)}</TableCell>
                     </TableRow>
                   </>
                 )}

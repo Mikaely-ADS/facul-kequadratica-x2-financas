@@ -1,69 +1,104 @@
 import React from "react";
 import { Link } from "wouter";
-import { XMark } from "@/components/XMark";
+import { motion } from "framer-motion";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#1F1F1F] text-white relative overflow-hidden flex items-center">
+    <div className="min-h-screen bg-[#1A1A1A] text-white relative overflow-hidden flex items-center">
       {/* Grid Background */}
       <div className="absolute inset-0 pointer-events-none">
         <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-            </pattern>
-            <pattern id="diagonal" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <line x1="0" y1="0" x2="0" y2="100" stroke="rgba(255,255,255,0.05)" strokeWidth="2" />
-            </pattern>
-            <pattern id="diagonal-reverse" width="100" height="100" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
-              <line x1="0" y1="0" x2="0" y2="100" stroke="rgba(255,255,255,0.05)" strokeWidth="2" />
+            <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+              <path d="M 48 0 L 0 0 0 48" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#grid)" />
-          <rect width="100%" height="100%" fill="url(#diagonal)" />
-          <rect width="100%" height="100%" fill="url(#diagonal-reverse)" />
         </svg>
       </div>
 
-      <div className="container mx-auto px-6 relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-        <div className="space-y-8">
-          <div className="flex items-center gap-3 mb-12">
-            <div className="w-8 h-8">
-              <XMark />
-            </div>
-            <div className="flex items-center gap-1 font-title font-bold">
-              <span>Kê</span><span className="text-[#57BC67]">Quadrática</span>
+      <div className="container mx-auto px-8 md:px-16 relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center min-h-screen py-12">
+        {/* Left column */}
+        <div className="flex flex-col justify-center space-y-10">
+
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            {/* X² SVG logo mark */}
+            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <line x1="4" y1="4" x2="32" y2="32" stroke="#57BC67" strokeWidth="5" strokeLinecap="round"/>
+              <line x1="32" y1="4" x2="4" y2="32" stroke="#57BC67" strokeWidth="5" strokeLinecap="round"/>
+              <text x="22" y="14" fill="#57BC67" fontSize="11" fontWeight="bold" fontFamily="sans-serif">²</text>
+            </svg>
+            <div className="font-bold text-xl tracking-wide">
+              <span className="text-white">Kê</span><span className="text-[#57BC67]">Quadrática</span>
             </div>
           </div>
 
-          <div className="space-y-2 text-[18px] sm:text-[20px] font-light text-white/90 leading-tight">
+          {/* Tagline */}
+          <div className="space-y-1 text-[22px] sm:text-[26px] font-light text-white/80 leading-snug">
             <p>Transformando gastos</p>
             <p>em decisões</p>
             <p>inteligentes</p>
           </div>
 
-          <div className="pt-4">
-            <h1 className="text-[64px] font-bold font-title leading-none">
-              X²<br />
-              Finanças
+          {/* Headline */}
+          <div>
+            <h1 className="font-bold leading-none" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+              <span className="text-[72px]">X</span><sup className="text-[40px] font-bold align-super" style={{ verticalAlign: 'super', lineHeight: 0 }}>2</sup>
+              <br />
+              <span className="text-[72px]">Finanças</span>
             </h1>
-            <p className="text-[#57BC67]/80 text-sm mt-2 font-mono">#kêx²</p>
           </div>
 
-          <div className="pt-8 flex flex-col items-start gap-4">
-            <Link href="/login" className="bg-[#57BC67] text-white px-8 py-3 rounded-full font-bold text-lg hover:bg-[#57BC67]/90 transition-colors">
-              Começar agora
-            </Link>
-            <Link href="/login" className="text-[#57BC67] text-sm font-medium hover:underline">
-              Já tem uma conta? Clique aqui
+          {/* CTA Buttons */}
+          <div className="flex flex-col items-start gap-4">
+            <motion.div
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.97 }}
+              animate={{ boxShadow: ["0 0 0px #57BC67", "0 0 20px #57BC6788", "0 0 0px #57BC67"] }}
+              transition={{ boxShadow: { repeat: Infinity, duration: 2.5 } }}
+            >
+              <Link
+                href="/login"
+                className="inline-block bg-[#57BC67] text-white px-10 py-3.5 rounded-full font-bold text-lg hover:bg-[#4aab5a] transition-colors"
+              >
+                Começar agora
+              </Link>
+            </motion.div>
+
+            <Link
+              href="/login"
+              className="text-sm font-semibold text-white/70 border-b border-white/30 pb-0.5 hover:text-white hover:border-white transition-colors"
+            >
+              Já tem uma conta? <span className="text-[#57BC67]">Clique aqui</span>
             </Link>
           </div>
         </div>
 
+        {/* Right column — X² illustration */}
         <div className="hidden md:flex justify-center items-center">
-          <div className="w-[300px] h-[300px]">
-            <XMark />
-          </div>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
+          >
+            <svg width="380" height="380" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Main X bars */}
+              <line x1="40" y1="40" x2="340" y2="340" stroke="#57BC67" strokeWidth="70" strokeLinecap="round"/>
+              <line x1="340" y1="40" x2="40" y2="340" stroke="#57BC67" strokeWidth="70" strokeLinecap="round"/>
+              {/* Superscript 2 — top-right, clearly visible */}
+              <circle cx="316" cy="60" r="44" fill="#1A1A1A"/>
+              <text
+                x="316"
+                y="78"
+                textAnchor="middle"
+                fill="#57BC67"
+                fontSize="52"
+                fontWeight="bold"
+                fontFamily="'Montserrat', 'Arial', sans-serif"
+              >2</text>
+            </svg>
+          </motion.div>
         </div>
       </div>
     </div>

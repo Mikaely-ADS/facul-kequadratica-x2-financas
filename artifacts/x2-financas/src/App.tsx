@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { AppShell } from "@/components/AppShell";
 import LandingPage from "@/pages/LandingPage";
 import LoginPage from "@/pages/LoginPage";
+import RegisterPage from "@/pages/RegisterPage";
 import DashboardPage from "@/pages/DashboardPage";
 import CashflowPage from "@/pages/CashflowPage";
 import GoalsPage from "@/pages/GoalsPage";
@@ -24,8 +25,8 @@ function Router() {
     <Switch>
       <Route path="/" component={LandingPage} />
       <Route path="/login" component={LoginPage} />
-      
-      {/* Routes wrapped in AppShell */}
+      <Route path="/cadastro" component={RegisterPage} />
+
       <Route path="/dashboard">
         <AppShell><DashboardPage /></AppShell>
       </Route>
@@ -47,7 +48,7 @@ function Router() {
       <Route path="/configuracoes">
         <AppShell><SettingsPage /></AppShell>
       </Route>
-      
+
       <Route component={NotFound} />
     </Switch>
   );
@@ -55,12 +56,14 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Router />
-        <Toaster />
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Router />
+          <Toaster />
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 
