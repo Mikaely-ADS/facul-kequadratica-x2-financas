@@ -19,12 +19,12 @@ export default function LandingPage() {
       <div className="container mx-auto px-8 md:px-16 relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center min-h-screen py-12">
         <div className="flex flex-col justify-center space-y-10">
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 flex-shrink-0">
-              <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 7 L33 33" stroke="#57BC67" strokeWidth="5" strokeLinecap="round"/>
-                <path d="M33 7 L7 33" stroke="#57BC67" strokeWidth="5" strokeLinecap="round"/>
+            <div className="relative w-12 h-12 flex-shrink-0">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M8 8 L40 40" stroke="#57BC67" strokeWidth="6" strokeLinecap="round"/>
+                <path d="M40 8 L8 40" stroke="#57BC67" strokeWidth="6" strokeLinecap="round"/>
               </svg>
-              <span className="absolute -top-1.5 -right-1.5 text-[#57BC67] font-bold text-[10px] leading-none">2</span>
+              <span className="absolute -top-2 -right-1 text-[#57BC67] font-bold text-[9px] leading-none">2</span>
             </div>
             <div className="font-bold text-xl tracking-wide">
               <span className="text-white">Kê</span><span className="text-[#57BC67]">Quadrática</span>
@@ -67,10 +67,10 @@ export default function LandingPage() {
         <div className="hidden md:flex justify-center items-center">
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, ease: "easeOut" }}>
             <svg width="380" height="380" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <line x1="40" y1="40" x2="340" y2="340" stroke="#57BC67" strokeWidth="70" strokeLinecap="round"/>
-              <line x1="340" y1="40" x2="40" y2="340" stroke="#57BC67" strokeWidth="70" strokeLinecap="round"/>
-              <circle cx="316" cy="60" r="44" fill="#1A1A1A"/>
-              <text x="316" y="78" textAnchor="middle" fill="#57BC67" fontSize="52" fontWeight="bold" fontFamily="'Montserrat', 'Arial', sans-serif">2</text>
+              <line x1="42" y1="42" x2="338" y2="338" stroke="#57BC67" strokeWidth="72" strokeLinecap="round"/>
+              <line x1="338" y1="42" x2="42" y2="338" stroke="#57BC67" strokeWidth="72" strokeLinecap="round"/>
+              <rect x="286" y="38" width="54" height="54" rx="18" fill="#1A1A1A"/>
+              <text x="313" y="73" textAnchor="middle" fill="#57BC67" fontSize="42" fontWeight="bold" fontFamily="'Montserrat', 'Arial', sans-serif">2</text>
             </svg>
           </motion.div>
         </div>
