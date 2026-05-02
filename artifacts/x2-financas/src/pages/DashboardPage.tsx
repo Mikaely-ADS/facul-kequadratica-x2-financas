@@ -181,16 +181,16 @@ export default function DashboardPage() {
           </Card>
         </motion.div>
 
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants} className="lg:self-start">
           <Card className="bg-card border-border">
-            <CardHeader>
+            <CardHeader className="pb-2">
               <CardTitle className="text-lg font-bold">Despesas por Categoria</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="h-[230px] w-full">
+            <CardContent className="pt-0">
+              <div className="h-[190px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={expenses || []} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="amount" nameKey="category" stroke="none" labelLine={false}>
+                    <Pie data={expenses || []} cx="50%" cy="46%" innerRadius={50} outerRadius={80} paddingAngle={3} dataKey="amount" nameKey="category" stroke="none" labelLine={false}>
                       {(expenses || []).map((_, index) => (
                         <Cell key={`cell-${index}`} fill={DONUT_COLORS[index % DONUT_COLORS.length]} />
                       ))}
@@ -200,12 +200,12 @@ export default function DashboardPage() {
                 </ResponsiveContainer>
               </div>
 
-              <div className="mt-3 space-y-2">
+              <div className="mt-1 space-y-1.5">
                 {(expenses || []).map((entry, index) => (
-                  <div key={index} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
+                  <div key={index} className="flex items-center justify-between text-sm leading-none">
+                    <div className="flex items-center gap-2 min-w-0">
                       <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: DONUT_COLORS[index % DONUT_COLORS.length] }} />
-                      <span className="text-muted-foreground truncate max-w-[100px]">{entry.category}</span>
+                      <span className="text-muted-foreground truncate max-w-[110px]">{entry.category}</span>
                     </div>
                     <span className="font-medium text-foreground">{entry.percentage}%</span>
                   </div>
