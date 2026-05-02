@@ -53,10 +53,10 @@ export default function LandingPage() {
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col items-start gap-4">
+          <div className="flex flex-col items-start gap-3">
             <Link href="/login">
               <motion.button
-                className="bg-[#57BC67] text-white px-10 py-3.5 rounded-full font-bold text-lg cursor-pointer"
+                className="bg-[#57BC67] text-white px-10 py-3.5 rounded-full font-bold text-lg cursor-pointer w-full min-w-[200px]"
                 whileHover={{ scale: 1.04, backgroundColor: "#4aab5a" }}
                 whileTap={{ scale: 0.96 }}
                 animate={{ boxShadow: ["0 0 0px #57BC67", "0 0 22px #57BC6799", "0 0 0px #57BC67"] }}
@@ -68,7 +68,7 @@ export default function LandingPage() {
 
             <Link
               href="/login"
-              className="text-sm font-semibold text-white/70 border-b border-white/30 pb-0.5 hover:text-white hover:border-white transition-colors"
+              className="text-sm font-semibold text-white/70 hover:text-white transition-colors text-center w-full min-w-[200px]"
             >
               Já tem uma conta? <span className="text-[#57BC67]">Clique aqui</span>
             </Link>
