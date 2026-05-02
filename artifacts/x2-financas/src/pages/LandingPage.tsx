@@ -23,12 +23,14 @@ export default function LandingPage() {
 
           {/* Logo */}
           <div className="flex items-center gap-3">
-            {/* X² SVG logo mark */}
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <line x1="4" y1="4" x2="32" y2="32" stroke="#57BC67" strokeWidth="5" strokeLinecap="round"/>
-              <line x1="32" y1="4" x2="4" y2="32" stroke="#57BC67" strokeWidth="5" strokeLinecap="round"/>
-              <text x="22" y="14" fill="#57BC67" fontSize="11" fontWeight="bold" fontFamily="sans-serif">²</text>
-            </svg>
+            {/* X² icon */}
+            <div className="relative w-9 h-9 flex-shrink-0">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <line x1="5" y1="5" x2="31" y2="31" stroke="#57BC67" strokeWidth="5" strokeLinecap="round"/>
+                <line x1="31" y1="5" x2="5" y2="31" stroke="#57BC67" strokeWidth="5" strokeLinecap="round"/>
+              </svg>
+              <span className="absolute -top-1 -right-2 text-[#57BC67] font-bold text-[11px] leading-none">2</span>
+            </div>
             <div className="font-bold text-xl tracking-wide">
               <span className="text-white">Kê</span><span className="text-[#57BC67]">Quadrática</span>
             </div>
@@ -43,8 +45,8 @@ export default function LandingPage() {
 
           {/* Headline */}
           <div>
-            <h1 className="font-bold leading-none" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-              <span className="text-[72px]">X</span><sup className="text-[40px] font-bold align-super" style={{ verticalAlign: 'super', lineHeight: 0 }}>2</sup>
+            <h1 className="font-bold" style={{ fontFamily: "'Montserrat', sans-serif", lineHeight: 1.05 }}>
+              <span className="text-[72px]">X</span><span className="text-[42px] font-bold" style={{ verticalAlign: 'super', fontSize: '42px', lineHeight: 1 }}>²</span>
               <br />
               <span className="text-[72px]">Finanças</span>
             </h1>
