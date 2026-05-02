@@ -51,7 +51,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
-      {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-64 flex-col border-r border-border bg-sidebar h-screen sticky top-0">
         <div className="p-6 flex items-center gap-3">
           <div className="w-10 h-10 flex-shrink-0 relative">
@@ -60,7 +59,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="w-px h-10 bg-border/50 mx-1" />
           <div className="flex flex-col">
             <span className="font-title font-bold text-lg leading-tight">
-              <span className="text-primary">X²</span>{" "}
               <span className="text-foreground">Kê</span><span className="text-primary">Quadrática</span>
             </span>
             <span className="text-[9px] text-muted-foreground uppercase tracking-widest">Inteligência Financeira</span>
@@ -132,13 +130,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
-        {/* Top Header */}
         <header className="h-16 border-b border-border flex items-center justify-between px-4 md:px-8 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-bold text-foreground font-title">{getPageTitle()}</h1>
-            
             <div className="hidden sm:flex items-center">
               <Popover>
                 <PopoverTrigger asChild>
@@ -212,7 +207,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        {/* Page Content */}
         <div className="flex-1 overflow-x-hidden">
           <AnimatePresence mode="wait">
             <motion.div
@@ -229,7 +223,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </main>
 
-      {/* Mobile Bottom Tab Bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-sidebar border-t border-border flex items-center justify-around px-2 z-40">
         {NAV_ITEMS.slice(0, 4).map((item) => {
           const isActive = location === item.href;

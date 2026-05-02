@@ -87,9 +87,7 @@ export default function DashboardPage() {
         <p className="text-muted-foreground mt-1">Aqui está o resumo da sua vida financeira hoje.</p>
       </div>
 
-      {/* Summary cards — equal height */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Saldo Atual */}
         <motion.div variants={itemVariants} className="h-full">
           <Card className="bg-card border-border hover-elevate h-full">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -108,7 +106,6 @@ export default function DashboardPage() {
           </Card>
         </motion.div>
 
-        {/* Saldo de Investimento */}
         <motion.div variants={itemVariants} className="h-full">
           <Card className="bg-card border-border hover-elevate h-full">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -127,7 +124,6 @@ export default function DashboardPage() {
           </Card>
         </motion.div>
 
-        {/* Despesas Fixas */}
         <motion.div variants={itemVariants} className="h-full">
           <Card className="bg-card border-border hover-elevate h-full">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -141,7 +137,6 @@ export default function DashboardPage() {
           </Card>
         </motion.div>
 
-        {/* Meta de Lucro */}
         <motion.div variants={itemVariants} className="h-full">
           <Card className="bg-card border-border hover-elevate h-full">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -160,7 +155,6 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Weekly Performance — Bar chart */}
         <motion.div variants={itemVariants} className="lg:col-span-2">
           <Card className="bg-card border-border">
             <CardHeader>
@@ -171,20 +165,8 @@ export default function DashboardPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={weeklyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }} barCategoryGap="35%">
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-                    <XAxis
-                      dataKey="week"
-                      stroke="hsl(var(--muted-foreground))"
-                      fontSize={12}
-                      tickLine={false}
-                      axisLine={false}
-                    />
-                    <YAxis
-                      stroke="hsl(var(--muted-foreground))"
-                      fontSize={12}
-                      tickLine={false}
-                      axisLine={false}
-                      tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
-                    />
+                    <XAxis dataKey="week" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
                     <ReferenceLine y={0} stroke="hsl(var(--border))" strokeWidth={1.5} />
                     <Tooltip content={<CustomTooltip />} />
                     <Bar dataKey="value" radius={[6, 6, 0, 0]}>
@@ -199,28 +181,16 @@ export default function DashboardPage() {
           </Card>
         </motion.div>
 
-        {/* Expenses by Category — Donut */}
         <motion.div variants={itemVariants}>
           <Card className="bg-card border-border">
             <CardHeader>
               <CardTitle className="text-lg font-bold">Despesas por Categoria</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-[200px] w-full">
+              <div className="h-[230px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie
-                      data={expenses || []}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={55}
-                      outerRadius={85}
-                      paddingAngle={3}
-                      dataKey="amount"
-                      nameKey="category"
-                      stroke="none"
-                      labelLine={false}
-                    >
+                    <Pie data={expenses || []} cx="50%" cy="50%" innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="amount" nameKey="category" stroke="none" labelLine={false}>
                       {(expenses || []).map((_, index) => (
                         <Cell key={`cell-${index}`} fill={DONUT_COLORS[index % DONUT_COLORS.length]} />
                       ))}
@@ -229,8 +199,12 @@ export default function DashboardPage() {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
+            </CardContent>
+          </Card>
 
-              <div className="mt-3 space-y-2">
+          <Card className="bg-card border-border mt-4">
+            <CardContent className="pt-4">
+              <div className="space-y-2">
                 {(expenses || []).map((entry, index) => (
                   <div key={index} className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
