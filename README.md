@@ -1,4 +1,5 @@
-Aplicação Web para Controle Financeiro
+Aplicação Web para Controle Financeiro.
+
 Este projeto foi desenvolvido com o objetivo de ajudar pessoas a organizarem melhor suas finanças pessoais de forma simples e prática. A aplicação permite registrar receitas e despesas, acompanhar gastos e visualizar informações financeiras de maneira mais clara, ajudando no controle do orçamento do dia a dia.
 
 ✨ Funcionalidades
